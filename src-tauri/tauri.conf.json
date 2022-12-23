@@ -7,12 +7,15 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "smaller-image",
-    "version": "0.0.0"
+    "productName": "Smaller Image",
+    "version": "0.0.1"
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "fs": {
+        "scope": ["$APP/*", "$DESKTOP/*"]
+      }
     },
     "bundle": {
       "active": true,
@@ -60,9 +63,9 @@
       {
         "fullscreen": false,
         "height": 600,
-        "resizable": true,
+        "resizable": false,
         "title": "smaller-image",
-        "width": 800
+        "width": 1024
       }
     ]
   }

@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.app-background {
+  background: radial-gradient(
+        36.45% 49.29% at 80.98% 61.65%,
+        rgba(219, 39, 119, 0.08) 0%,
+        rgba(219, 39, 119, 0) 100%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+    radial-gradient(
+        27.71% 37.48% at 65.88% 89.54%,
+        rgba(192, 132, 252, 0.08) 0%,
+        rgba(0, 0, 0, 0) 100%,
+        rgba(192, 132, 252, 0) 200%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+    #1c1917;
+}

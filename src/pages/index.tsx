@@ -1,68 +1,101 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import { open } from "@tauri-apps/api/dialog";
+import classNames from "classnames";
+import { ConfigPanel } from "../components/ConfigPanel";
+import { SelectFolderInput } from "../components/SelectFolderInput";
+import { toast } from "react-hot-toast";
+
+export const DEFAULT_SCALE = 100;
+export const DEFAULT_COMPRESSION = 75;
 
 function App() {
   const [feedback, setFeedback] = useState("");
   const [folderPath, setFolderPath] = useState("");
 
+  const [compression, setCompression] = useState(DEFAULT_COMPRESSION);
+  const [scale, setScale] = useState(DEFAULT_SCALE);
+
   const [loading, setLoading] = useState(false);
 
   async function handleCompressFolderImages() {
     setLoading(true);
-    setFeedback(
-      await invoke("compress", {
-        inputDir: folderPath || "./icons",
-      })
-    );
-    setLoading(false);
+
+    try {
+      setFeedback(
+        await invoke("compress", {
+          inputDir: folderPath || "./icons",
+        })
+      );
+
+      toast.success("Compressão realizada com sucesso!");
+
+      setFolderPath("");
+    } catch (e) {
+      setFeedback(e.message);
+      toast.success("Erro ao comprimir, tente novamente.");
+    } finally {
+      handleResetConfig();
+      setLoading(false);
+    }
   }
 
-  async function handleGetFolderPath() {
-    const filepath = (await open({
-      directory: true,
-    })) as string;
-
-    setFolderPath(filepath.split("/").at(-1));
+  function handleResetConfig() {
+    setScale(DEFAULT_SCALE);
+    setCompression(DEFAULT_COMPRESSION);
   }
 
   return (
-    <div className="w-screen h-screen bg-stone-900 flex items-center justify-center flex-col">
-      <h1 className="text-6xl text-transparent font-black bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-        SMALLER IMAGES
-      </h1>
-      <p className="text-slate-200 mt-4">
-        Now only rescale and compress to .jpg files
-      </p>
+    <div className="flex flex-col w-screen h-screen bg-base-200">
+      <header className="flex items-center justify-between w-full px-6 py-4 border-b-2 border-neutral">
+        <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+          SMALLER IMAGES
+        </h1>
 
-      {loading ? (
-        <p className="mt-12 text-white">Compressing...</p>
-      ) : (
-        <>
-          <div className="flex mt-12">
-            <button
-              className="bg-purple-600 rounded-full mr-6 text-slate-50 font-medium px-6 py-2 hover:bg-purple-800 transition-all"
-              onClick={handleGetFolderPath}
-            >
-              Get Folder
-            </button>
+        <p className="text-xs text-base-content">
+          Now only rescale and compress to .jpg files from folder.
+        </p>
+      </header>
+
+      <main className="grid h-full" style={{ gridTemplateColumns: "1fr 3fr" }}>
+        <ConfigPanel
+          compression={compression}
+          scale={scale}
+          onCompressionChange={(e) => setCompression(e.target.valueAsNumber)}
+          onScaleChange={(e) => setScale(e.target.valueAsNumber)}
+          onResetConfig={handleResetConfig}
+        />
+
+        <section className="flex flex-col justify-between h-full">
+          <SelectFolderInput
+            folderPath={folderPath}
+            onFolderSelect={(path) => setFolderPath(path)}
+          />
+
+          <section className="flex items-center justify-between px-6 py-4 border-t-2 bg-base-100 border-neutral">
+            {!!folderPath ? (
+              <button
+                className={"btn btn-accent"}
+                type="button"
+                onClick={() => setFolderPath("")}
+                disabled={!folderPath}
+              >
+                Selecionar outra pasta
+              </button>
+            ) : null}
 
             <button
-              className="bg-purple-600 rounded-full text-slate-50 font-medium px-6 py-2 hover:bg-purple-800 transition-all"
+              className={classNames("btn btn-primary", {
+                ["loading"]: loading,
+              })}
               type="button"
               onClick={handleCompressFolderImages}
+              disabled={!folderPath}
             >
-              Compress
+              {loading ? "Comprimindo Imagens..." : "Comprimir Imagens"}
             </button>
-          </div>
-
-          {folderPath ? (
-            <p className="mt-12 text-white">Folder: {folderPath}</p>
-          ) : null}
-
-          <p className="mt-16 text-white font-bold">{feedback}</p>
-        </>
-      )}
+          </section>
+        </section>
+      </main>
     </div>
   );
 }
