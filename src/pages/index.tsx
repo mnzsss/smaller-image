@@ -54,6 +54,7 @@ function App() {
     } catch (e) {
       toast.error("Erro ao comprimir, tente novamente.");
     } finally {
+      setFolderPath("");
       handleResetConfig();
       setLoading(false);
     }
