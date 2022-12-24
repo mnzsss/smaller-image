@@ -1250,9 +1250,9 @@ dependencies = [
 
 [[package]]
 name = "image_compressor"
-version = "1.2.2"
+version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f7c7a4b1af7ac7ed648983528ddad8be53bf8d97dd67cca1e411212d62a941f"
+checksum = "16d8ef60ecc3853be12f618c50fd22c9b3a3f5bd51342e7e7b78dc438ae473e4"
 dependencies = [
  "crossbeam-queue",
  "image",
@@ -2716,7 +2716,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "smaller-image"
+name = "smaller-images"
 version = "0.0.1"
 dependencies = [
  "image_compressor",

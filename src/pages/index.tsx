@@ -1,33 +1,35 @@
-import { useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
-import classNames from "classnames";
-import { ConfigPanel } from "../components/ConfigPanel";
-import { SelectFolderInput } from "../components/SelectFolderInput";
-import { toast } from "react-hot-toast";
+import * as React from 'react'
+import { invoke } from '@tauri-apps/api/tauri'
+import classNames from 'classnames'
+import { ConfigPanel } from '../components/ConfigPanel'
+import { SelectFolderInput } from '../components/SelectFolderInput'
+import { toast } from 'react-hot-toast'
 
-export const DEFAULT_SCALE = 100;
-export const DEFAULT_COMPRESSION = 75;
+export const DEFAULT_SCALE = 100
+export const DEFAULT_QUALITY = 75
 
 function App() {
-  const [folderPath, setFolderPath] = useState("");
+  const [folderPath, setFolderPath] = React.useState('')
 
-  const [compression, setCompression] = useState(DEFAULT_COMPRESSION);
-  const [scale, setScale] = useState(DEFAULT_SCALE);
+  const [quality, setQuality] = React.useState(DEFAULT_QUALITY)
+  const [scale, setScale] = React.useState(DEFAULT_SCALE)
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = React.useState(false)
 
-  async function handleCompressFolderImages() {
-    setLoading(true);
+  const handleCompressFolderImages = React.useCallback(async () => {
+    setLoading(true)
 
     try {
-      const distPath = await invoke("compress", {
+      const distPath = await invoke('compress', {
         inputDir: folderPath,
-      });
+        quality: Number(quality.toFixed(2)),
+        scale: Number((scale / 100).toFixed(2)),
+      })
 
       toast.custom((t) => (
         <div
           className={`${
-            t.visible ? "animate-enter" : "animate-leave"
+            t.visible ? 'animate-enter' : 'animate-leave'
           } max-w-md w-full bg-neutral shadow-lg border-neutral-focus border-2 rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
         >
           <div className="flex-1 w-0 p-4">
@@ -42,7 +44,9 @@ function App() {
           <div className="flex border-l-2 border-neutral-focus">
             <button
               onClick={async () =>
-                await invoke("show_in_folder", { path: distPath })
+                await invoke('show_in_folder', {
+                  path: `${distPath}/`,
+                })
               }
               className="flex items-center justify-center w-full p-4 text-sm font-medium border border-transparent rounded-none rounded-r-lg text-neutral-content hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary"
             >
@@ -50,22 +54,23 @@ function App() {
             </button>
           </div>
         </div>
-      ));
+      ))
     } catch (e) {
-      toast.error("Erro ao comprimir, tente novamente.");
+      toast.error('Erro ao comprimir, tente novamente.')
     } finally {
-      handleResetConfig();
-      setLoading(false);
+      handleResetConfig()
+      setFolderPath('')
+      setLoading(false)
     }
-  }
+  }, [folderPath, quality, scale])
 
   function handleResetConfig() {
-    setScale(DEFAULT_SCALE);
-    setCompression(DEFAULT_COMPRESSION);
+    setScale(DEFAULT_SCALE)
+    setQuality(DEFAULT_QUALITY)
   }
 
   return (
-    <div className="flex flex-col w-screen h-screen bg-base-200">
+    <div className="flex flex-col w-screen h-screen overflow-hidden bg-base-200">
       <header className="flex items-center justify-between w-full px-6 py-4 border-b-2 border-neutral">
         <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
           SMALLER IMAGES
@@ -76,11 +81,11 @@ function App() {
         </p>
       </header>
 
-      <main className="grid h-full" style={{ gridTemplateColumns: "1fr 3fr" }}>
+      <main className="grid h-full" style={{ gridTemplateColumns: '1fr 3fr' }}>
         <ConfigPanel
-          compression={compression}
+          quality={quality}
           scale={scale}
-          onCompressionChange={(e) => setCompression(e.target.valueAsNumber)}
+          onQualityChange={(e) => setQuality(e.target.valueAsNumber)}
           onScaleChange={(e) => setScale(e.target.valueAsNumber)}
           onResetConfig={handleResetConfig}
         />
@@ -92,11 +97,11 @@ function App() {
           />
 
           <section className="flex items-center justify-between px-6 py-4 border-t-2 bg-base-100 border-neutral">
-            {!!folderPath ? (
+            {folderPath ? (
               <button
-                className={"btn btn-accent"}
+                className={'btn btn-accent'}
                 type="button"
-                onClick={() => setFolderPath("")}
+                onClick={() => setFolderPath('')}
                 disabled={!folderPath}
               >
                 Selecionar outra pasta
@@ -104,20 +109,20 @@ function App() {
             ) : null}
 
             <button
-              className={classNames("btn btn-primary", {
-                ["loading"]: loading,
+              className={classNames('btn btn-primary', {
+                loading,
               })}
               type="button"
               onClick={handleCompressFolderImages}
               disabled={!folderPath}
             >
-              {loading ? "Comprimindo Imagens..." : "Comprimir Imagens"}
+              {loading ? 'Comprimindo Imagens...' : 'Comprimir Imagens'}
             </button>
           </section>
         </section>
       </main>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
