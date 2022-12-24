@@ -3,9 +3,10 @@ use image_compressor::FolderCompressor;
 use std::path::PathBuf;
 use std::sync::mpsc;
 
-pub fn compress_image<'a>(input_dir: &'a str) -> &'a str {
+pub fn compress_image<'a>(input_dir: &'a str) -> String {
     let origin = PathBuf::from(input_dir); // original directory path
-    let dest = PathBuf::from(format!("{}-{}", input_dir, "results")); // destination directory path
+    let dest_path: String = format!("{}-{}", input_dir, "results");
+    let dest = PathBuf::from(dest_path); // destination directory path
     let thread_count = 4; // number of threads
     let (tx, _) = mpsc::channel(); // Sender and Receiver. for more info, check mpsc and message passing.
 
@@ -15,11 +16,11 @@ pub fn compress_image<'a>(input_dir: &'a str) -> &'a str {
     comp.set_sender(tx);
 
     match comp.compress() {
-        Ok(_) => "Success",
+        Ok(_) => format!("{}-{}", input_dir, "results"),
         Err(e) => {
             println!("Cannot compress the folder!: {}", e);
 
-            return "Error";
+            return format!("Error");
         }
     }
 }

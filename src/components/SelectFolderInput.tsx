@@ -13,9 +13,7 @@ export function SelectFolderInput({ folderPath, onFolderSelect }) {
         title: "Selecionar pasta de imagens",
       })) as string;
 
-      const folderName = filepath.split("/").at(-1);
-
-      onFolderSelect(folderName);
+      onFolderSelect(filepath);
 
       const entries = (await readDir(filepath)).filter(
         (path) => path.name.endsWith(".jpg") || path.name.endsWith(".jpeg")
@@ -32,43 +30,41 @@ export function SelectFolderInput({ folderPath, onFolderSelect }) {
   }, [folderPath]);
 
   return (
-    <section className="px-6 py-4 ">
-      <div>
-        <div className="flex items-center justify-between w-full">
-          <span className="font-medium text-md text-base-content">
-            {images.length ? "Arquivos da Pasta" : "Selecionar Pasta"}
-          </span>
+    <section className="h-full px-6 py-4">
+      <div className="flex items-center justify-between w-full">
+        <span className="font-medium text-md text-base-content">
+          {images.length ? "Arquivos da Pasta" : "Selecionar Pasta"}
+        </span>
 
-          {!!folderPath ? (
-            <span className="flex items-center gap-2">
-              <FolderIcon className="w-6 h-6 text-blue-500" />
-              <strong>{folderPath}</strong>
-            </span>
-          ) : null}
-        </div>
-
-        <div className="m-0 mb-6 divider"></div>
-
-        {images.length ? (
-          <ul className="w-full overflow-scroll max-h-[344px]">
-            {images.map((image) => (
-              <li className="w-full py-4 border-b-2 rounded-t-lg border-neutral">
-                {image.name}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <button
-            className="flex items-center justify-center w-full h-24 gap-2 duration-300 ease-linear border-2 rounded-md hover:opacity-70 bg-base-100 border-neutral"
-            onClick={handleGetFolderPath}
-          >
+        {!!folderPath ? (
+          <span className="flex items-center gap-2">
             <FolderIcon className="w-6 h-6 text-blue-500" />
-            <span className="text-base-content">
-              Clique para selecionar sua pasta
-            </span>
-          </button>
-        )}
+            <strong>{folderPath}</strong>
+          </span>
+        ) : null}
       </div>
+
+      <div className="m-0 mb-6 divider"></div>
+
+      {images.length ? (
+        <ul className="w-full overflow-y-scroll h-full max-h-[344px]">
+          {images.map((image) => (
+            <li className="w-full py-4 border-b-2 rounded-t-lg border-neutral">
+              {image.name}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <button
+          className="flex items-center justify-center w-full h-24 gap-2 duration-300 ease-linear border-2 rounded-md hover:opacity-70 bg-base-100 border-neutral"
+          onClick={handleGetFolderPath}
+        >
+          <FolderIcon className="w-6 h-6 text-blue-500" />
+          <span className="text-base-content">
+            Clique para selecionar sua pasta
+          </span>
+        </button>
+      )}
     </section>
   );
 }

@@ -1,8 +1,18 @@
 import type { AppProps } from "next/app";
+import { Toaster } from "react-hot-toast";
 
 import "../styles/global.css";
 
-// This default export is required in a new `pages/_app.js` file.
 export default function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <Toaster
+        toastOptions={{
+          position: "bottom-center",
+          duration: 5000,
+        }}
+      />
+      <Component {...pageProps} />
+    </>
+  );
 }

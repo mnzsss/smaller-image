@@ -9,7 +9,6 @@ export const DEFAULT_SCALE = 100;
 export const DEFAULT_COMPRESSION = 75;
 
 function App() {
-  const [feedback, setFeedback] = useState("");
   const [folderPath, setFolderPath] = useState("");
 
   const [compression, setCompression] = useState(DEFAULT_COMPRESSION);
@@ -21,18 +20,39 @@ function App() {
     setLoading(true);
 
     try {
-      setFeedback(
-        await invoke("compress", {
-          inputDir: folderPath || "./icons",
-        })
-      );
+      const distPath = await invoke("compress", {
+        inputDir: folderPath,
+      });
 
-      toast.success("Compressão realizada com sucesso!");
-
-      setFolderPath("");
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } max-w-md w-full bg-neutral shadow-lg border-neutral-focus border-2 rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        >
+          <div className="flex-1 w-0 p-4">
+            <div className="flex items-start">
+              <div className="flex-1 ml-3">
+                <p className="text-sm font-medium text-neutral-content">
+                  Compressão realizada com sucesso!
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l-2 border-neutral-focus">
+            <button
+              onClick={async () =>
+                await invoke("show_in_folder", { path: distPath })
+              }
+              className="flex items-center justify-center w-full p-4 text-sm font-medium border border-transparent rounded-none rounded-r-lg text-neutral-content hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              Abrir Pasta
+            </button>
+          </div>
+        </div>
+      ));
     } catch (e) {
-      setFeedback(e.message);
-      toast.success("Erro ao comprimir, tente novamente.");
+      toast.error("Erro ao comprimir, tente novamente.");
     } finally {
       handleResetConfig();
       setLoading(false);
