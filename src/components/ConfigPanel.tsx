@@ -1,14 +1,13 @@
-import { DEFAULT_COMPRESSION, DEFAULT_SCALE } from "../pages";
+import { DEFAULT_QUALITY, DEFAULT_SCALE } from '../pages'
 
 export function ConfigPanel({
-  compression,
+  quality,
   scale,
-  onCompressionChange,
+  onQualityChange,
   onScaleChange,
   onResetConfig,
 }) {
-  const enableReset =
-    DEFAULT_SCALE === scale && DEFAULT_COMPRESSION === compression;
+  const enableReset = DEFAULT_SCALE === scale && DEFAULT_QUALITY === quality
 
   return (
     <aside className="flex flex-col h-full px-6 py-4 border-r-2 border-neutral">
@@ -20,26 +19,26 @@ export function ConfigPanel({
 
       <div className="mt-6">
         <div className="flex items-center justify-between mb-3">
-          <span className="block text-xs text-neutral-content">Compressão</span>
+          <span className="block text-xs text-neutral-content">Qualidade</span>
           <span className="text-sm font-bold text-base-content">
-            {compression}%
+            {quality}%
           </span>
         </div>
         <input
           type="range"
           min="0"
           max="100"
-          value={compression}
+          value={quality}
           className="range range-primary range-sm"
-          step="25"
-          onChange={onCompressionChange}
+          step="5"
+          onChange={onQualityChange}
         />
         <div className="flex justify-between w-full px-2 mt-1 text-xs">
-          <span>0</span>
-          <span>25</span>
-          <span>50</span>
-          <span>75</span>
-          <span>100</span>
+          <span>0%</span>
+          <span>25%</span>
+          <span>50%</span>
+          <span>75%</span>
+          <span>100%</span>
         </div>
       </div>
 
@@ -48,7 +47,7 @@ export function ConfigPanel({
       <div>
         <div className="flex items-center justify-between mb-3">
           <span className="block text-xs text-neutral-content">
-            Tamanho das Imagens
+            Scala das Imagens
           </span>
           <span className="text-sm font-bold text-base-content">{scale}%</span>
         </div>
@@ -58,11 +57,14 @@ export function ConfigPanel({
           max="100"
           value={scale}
           className="range range-primary range-sm"
-          step="1"
+          step="5"
           onChange={onScaleChange}
         />
         <div className="flex justify-between w-full px-2 mt-1 text-xs">
           <span>0%</span>
+          <span>25%</span>
+          <span>50%</span>
+          <span>75%</span>
           <span>100%</span>
         </div>
       </div>
@@ -76,5 +78,5 @@ export function ConfigPanel({
         Resetar
       </button>
     </aside>
-  );
+  )
 }
