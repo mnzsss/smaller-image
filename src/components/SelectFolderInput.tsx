@@ -1,42 +1,42 @@
-import { FolderIcon } from "@heroicons/react/24/outline";
-import { open } from "@tauri-apps/api/dialog";
-import { readDir } from "@tauri-apps/api/fs";
-import { useEffect, useState } from "react";
+import { FolderIcon } from '@heroicons/react/24/outline'
+import { open } from '@tauri-apps/api/dialog'
+import { readDir } from '@tauri-apps/api/fs'
+import * as React from 'react'
 
 export function SelectFolderInput({ folderPath, onFolderSelect }) {
-  const [images, setImages] = useState([]);
+  const [images, setImages] = React.useState([])
 
   async function handleGetFolderPath() {
     try {
       const filepath = (await open({
         directory: true,
-        title: "Selecionar pasta de imagens",
-      })) as string;
+        title: 'Selecionar pasta de imagens',
+      })) as string
 
-      onFolderSelect(filepath);
+      onFolderSelect(filepath)
 
       const entries = (await readDir(filepath)).filter(
-        (path) => path.name.endsWith(".jpg") || path.name.endsWith(".jpeg")
-      );
+        (path) => path.name.endsWith('.jpg') || path.name.endsWith('.jpeg'),
+      )
 
-      setImages(entries);
+      setImages(entries)
     } catch (e) {}
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!folderPath) {
-      setImages([]);
+      setImages([])
     }
-  }, [folderPath]);
+  }, [folderPath])
 
   return (
     <section className="h-full px-6 py-4">
       <div className="flex items-center justify-between w-full">
         <span className="font-medium text-md text-base-content">
-          {images.length ? "Arquivos da Pasta" : "Selecionar Pasta"}
+          {images.length ? 'Arquivos da Pasta' : 'Selecionar Pasta'}
         </span>
 
-        {!!folderPath ? (
+        {folderPath ? (
           <span className="flex items-center gap-2">
             <FolderIcon className="w-6 h-6 text-blue-500" />
             <strong>{folderPath}</strong>
@@ -49,7 +49,10 @@ export function SelectFolderInput({ folderPath, onFolderSelect }) {
       {images.length ? (
         <ul className="w-full overflow-y-scroll h-full max-h-[344px]">
           {images.map((image) => (
-            <li className="w-full py-4 border-b-2 rounded-t-lg border-neutral">
+            <li
+              key={image.name}
+              className="w-full py-4 border-b-2 rounded-t-lg border-neutral"
+            >
               {image.name}
             </li>
           ))}
@@ -66,5 +69,5 @@ export function SelectFolderInput({ folderPath, onFolderSelect }) {
         </button>
       )}
     </section>
-  );
+  )
 }

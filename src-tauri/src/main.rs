@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-mod compress_images;
+mod compressor;
 
 use std::fs::metadata;
 use std::path::PathBuf;
@@ -55,8 +55,8 @@ fn show_in_folder(path: String) {
 }
 
 #[tauri::command]
-fn compress(input_dir: &str) -> String {
-    let response = compress_images::compress_image(input_dir);
+fn compress(input_dir: &str, quality: f32, scale: f32) -> String {
+    let response = compressor::compress_folder_images(input_dir, quality, scale);
 
     format!("{}", response)
 }
